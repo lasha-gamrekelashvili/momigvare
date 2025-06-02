@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import { connectDB } from './src/config/database.js';
 import problemRoutes from './src/routes/problems.js';
 import solverRoutes from './src/routes/solvers.js';
-import cors from 'cors';
 
 const allowedOrigins = [
   'https://momigvare.ge',
