@@ -4,6 +4,13 @@ import dotenv from 'dotenv';
 import { connectDB } from './src/config/database.js';
 import problemRoutes from './src/routes/problems.js';
 import solverRoutes from './src/routes/solvers.js';
+import cors from 'cors';
+
+const allowedOrigins = [
+  'https://momigvare.ge',
+  'https://www.momigvare.ge',
+  'https://momigvare-client.onrender.com',
+];
 
 dotenv.config();
 
@@ -11,7 +18,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json());
 
 // Connect to MongoDB
