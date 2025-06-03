@@ -9,6 +9,7 @@ const allowedOrigins = [
   'https://momigvare.ge',
   'https://www.momigvare.ge',
   'https://momigvare-client.onrender.com',
+  'http://localhost:5173',
 ];
 
 dotenv.config();

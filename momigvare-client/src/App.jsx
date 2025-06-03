@@ -5,6 +5,16 @@ import { api } from './services/api'
 import './App.css'
 import momigvareLogo from './assets/momigvare-icon.png'
 
+function formatTimeAgo(dateString) {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now - date) / 1000)
+  if (diffInSeconds < 60) return 'ახლახანს'
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} წთ-ის წინ`
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} საათის წინ`
+  return `${Math.floor(diffInSeconds / 86400)} დღის წინ`
+}
+
 function Home() {
   const [activeTab, setActiveTab] = useState('problems')
   const navigate = useNavigate()
@@ -183,6 +193,12 @@ function Home() {
                     value={problemInput}
                     onChange={e => setProblemInput(e.target.value)}
                     required
+                    onInvalid={(e) => {
+                      e.target.setCustomValidity('გთხოვთ შეავსოთ ველი')
+                    }}
+                    onInput={(e) => {
+                      e.target.setCustomValidity('')
+                    }}
                   />
                 </div>
                 <div className="form-group">
@@ -257,9 +273,28 @@ function Home() {
                       className="item-card"
                       onClick={() => handleItemClick('problem', p._id)}
                     >
-                      <div className="item-main">
-                        <div className="item-desc">{p.title}</div>
-                        <div className="item-budget">₾{p.budget}</div>
+                      <div className="item-meta-row improved">
+                        <span className="item-meta-item">
+                          <span className="item-meta-icon">
+                            <svg width="15" height="15" fill="none" stroke="#64748b" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-2.5 3.5-4 8-4s8 1.5 8 4"/></svg>
+                          </span> Anonymous user
+                        </span>
+                        <span className="item-meta-separator">•</span>
+                        <span className="item-meta-item">
+                          <span className="item-meta-icon">
+                            <svg width="15" height="15" fill="none" stroke="#64748b" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                          </span> {formatTimeAgo(p.createdAt)}
+                        </span>
+                        <span className="item-meta-separator">•</span>
+                        <span className="item-meta-item">
+                          {p.comments && p.comments.length ? p.comments.length : 0} კომენტარი
+                        </span>
+                      </div>
+                      <div className="item-title-divider" />
+                      <div className="item-header-row centered">
+                        <span className="item-title">{p.title}</span>
+                        <span className="item-meta-separator">•</span>
+                        <span className="item-budget">₾{p.budget}</span>
                       </div>
                       {p.description && (
                         <div className="item-preview">
@@ -361,9 +396,28 @@ function Home() {
                       className="item-card"
                       onClick={() => handleItemClick('solver', s._id)}
                     >
-                      <div className="item-main">
-                        <div className="item-desc">{s.title}</div>
-                        <div className="item-budget">₾{s.price}</div>
+                      <div className="item-meta-row improved">
+                        <span className="item-meta-item">
+                          <span className="item-meta-icon">
+                            <svg width="15" height="15" fill="none" stroke="#64748b" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-2.5 3.5-4 8-4s8 1.5 8 4"/></svg>
+                          </span> Anonymous user
+                        </span>
+                        <span className="item-meta-separator">•</span>
+                        <span className="item-meta-item">
+                          <span className="item-meta-icon">
+                            <svg width="15" height="15" fill="none" stroke="#64748b" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                          </span> {formatTimeAgo(s.createdAt)}
+                        </span>
+                        <span className="item-meta-separator">•</span>
+                        <span className="item-meta-item">
+                          {s.comments && s.comments.length ? s.comments.length : 0} კომენტარი
+                        </span>
+                      </div>
+                      <div className="item-title-divider" />
+                      <div className="item-header-row centered">
+                        <span className="item-title">{s.title}</span>
+                        <span className="item-meta-separator">•</span>
+                        <span className="item-budget">₾{s.price}</span>
                       </div>
                       {s.description && (
                         <div className="item-preview">

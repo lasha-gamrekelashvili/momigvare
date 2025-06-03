@@ -1,4 +1,4 @@
-const API_URL = 'https://momigvare.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL+'/api';
 
 export const api = {
   // Problems
