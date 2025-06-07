@@ -78,7 +78,7 @@ export function AuthButton({ }: AuthButtonProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div ref={modalRef} className="bg-white rounded-lg shadow-lg p-6 relative w-full max-w-md mx-2 animate-fade-in">
         <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 cursor-pointer"
           onClick={() => setShowLoginForm(false)}
           aria-label="Close"
         >
@@ -94,15 +94,15 @@ export function AuthButton({ }: AuthButtonProps) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="flex items-center gap-2 cursor-pointer">
             {user ? <UserIcon className="h-4 w-4" /> : <Settings className="h-4 w-4" />}
             {user && user.username}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           {!user ? (
-            <DropdownMenuItem onClick={() => setShowLoginForm(true)}>
-              <LogIn className="h-4 w-4 mr-2" /> Login
+            <DropdownMenuItem onClick={() => setShowLoginForm(true)} className="cursor-pointer">
+              <LogIn className="h-4 w-4 mr-2" /> ავტორიზაცია
             </DropdownMenuItem>
           ) : (
             <>
@@ -111,9 +111,9 @@ export function AuthButton({ }: AuthButtonProps) {
                 {user.username}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} disabled={authLoading} className="text-red-600">
+              <DropdownMenuItem onClick={handleLogout} disabled={authLoading} className="text-red-600 cursor-pointer">
                 <LogOut className="h-4 w-4 mr-2" />
-                {authLoading ? "Loading..." : "Sign out"}
+                {authLoading ? "Loading..." : "გამოსვლა"}
               </DropdownMenuItem>
             </>
           )}

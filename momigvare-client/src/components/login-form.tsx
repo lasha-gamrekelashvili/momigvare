@@ -1,12 +1,5 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
@@ -65,74 +58,62 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>{isLogin ? "Login to your account" : "Create an account"}</CardTitle>
-          <CardDescription>
-            {isLogin 
-              ? "Enter your credentials to login to your account"
-              : "Fill in your details to create a new account"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="johndoe"
-                  required
-                />
-              </div>
-              {!isLogin && (
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                </div>
-              )}
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" name="password" type="password" required />
-              </div>
-              {error && (
-                <div className="text-sm text-red-500">
-                  {error}
-                </div>
-              )}
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Loading..." : isLogin ? "Login" : "Register"}
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => setIsLogin(!isLogin)}
-                >
-                  {isLogin ? "Create an account" : "Already have an account? Login"}
-                </Button>
-              </div>
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-6">
+          <div className="grid gap-3">
+            <Label htmlFor="username">მომხმარებლის სახელი</Label>
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="johndoe"
+              required
+            />
+          </div>
+          {!isLogin && (
+            <div className="grid gap-3">
+              <Label htmlFor="email">იმეილი</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+              />
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          )}
+          <div className="grid gap-3">
+            <div className="flex items-center">
+              <Label htmlFor="password">პაროლი</Label>
+              <a
+                href="#"
+                className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+              >
+                დაგავიწყდა პაროლი?
+              </a>
+            </div>
+            <Input id="password" name="password" type="password" required />
+          </div>
+          {error && (
+            <div className="text-sm text-red-500">
+              {error}
+            </div>
+          )}
+          <div className="flex flex-col gap-3">
+            <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+              {loading ? "Loading..." : isLogin ? "შესვლა" : "რეგისტრაცია"}
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full cursor-pointer"
+              onClick={() => setIsLogin(!isLogin)}
+            >
+              {isLogin ? "ანგარიშის შექმნა" : "უკვე გაქვთ ანგარიში?"}
+            </Button>
+          </div>
+        </div>
+      </form>
     </div>
   )
 }

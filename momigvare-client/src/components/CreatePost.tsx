@@ -68,15 +68,15 @@ export function CreatePost() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to create post")
+        throw new Error("რაღაც ვერ გამოვიდა, გთხოვთ სცადოთ თავიდან.")
       }
 
-      toast.success("Post created successfully!")
+      toast.success("პოსტი გამოქვეყნებულია!")
       form.reset()
       // Dispatch event to notify that a new post was created
       window.dispatchEvent(new Event('post-created'))
     } catch (error) {
-      toast.error("Failed to create post. Please try again.")
+      toast.error("რაღაც ვერ გამოვიდა, გთხოვთ სცადოთ თავიდან.")
     } finally {
       setIsSubmitting(false)
     }

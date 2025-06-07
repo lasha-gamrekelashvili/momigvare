@@ -279,10 +279,10 @@ export function PostsList() {
       </div>
 
       <Sheet open={!!selectedPost} onOpenChange={(open) => !open && setSelectedPost(null)}>
-        <SheetContent className="w-full sm:max-w-lg p-0 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl border-none max-h-screen overflow-y-auto h-auto">
+        <SheetContent className="w-full sm:max-w-lg p-0 bg-white/90 backdrop-blur-xl shadow-2xl border-none max-h-screen overflow-y-auto h-auto">
           {selectedPost && (
             <>
-              <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl rounded-t-xl px-6 pt-6 pb-2 flex items-start justify-between border-b">
+              <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl px-6 pt-6 pb-2 flex items-start justify-between border-b">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <SheetTitle className="text-xl font-bold leading-tight">{selectedPost.title}</SheetTitle>
@@ -356,14 +356,7 @@ export function PostsList() {
 
       {editingPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg shadow-lg p-6 relative w-full max-w-2xl mx-2 animate-fade-in">
-            <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
-              onClick={() => setEditingPost(null)}
-              aria-label="Close"
-            >
-              <X className="h-5 w-5" />
-            </button>
+          <div className="bg-white shadow-lg p-6 relative w-full max-w-2xl mx-2 animate-fade-in rounded-lg">
             <EditPost
               post={editingPost}
               onClose={() => setEditingPost(null)}
