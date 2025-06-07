@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch Momigvare Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/momigvare-server/server.js",
+        "cwd": "${workspaceFolder}/momigvare-server",
+        "envFile": "${workspaceFolder}/momigvare-server/.env",
+        "skipFiles": ["<node_internals>/**"]
+      }
+    ]
+  }
+  
