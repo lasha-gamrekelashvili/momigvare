@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react"
-import { createPortal } from "react-dom"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { LogIn, LogOut, User as UserIcon, X, Settings } from "lucide-react"
+import { LogIn, LogOut, User as UserIcon, Settings, X } from "lucide-react"
 import { LoginForm } from "./login-form"
 import {
   DropdownMenu,
@@ -10,6 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface User {
   _id: string
@@ -26,7 +27,6 @@ export function AuthButton({ }: AuthButtonProps) {
   const [user, setUser] = useState<User | null>(null)
   const [authLoading, setAuthLoading] = useState(false)
   const [showLoginForm, setShowLoginForm] = useState(false)
-  const modalRef = useRef<HTMLDivElement>(null)
 
   const handleLoginSuccess = async (token: string) => {
     setAuthLoading(true)
@@ -62,64 +62,61 @@ export function AuthButton({ }: AuthButtonProps) {
     }
   }, [])
 
-  // Close modal on outside click
-  useEffect(() => {
-    if (!showLoginForm) return
-    function handleClick(e: MouseEvent) {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        setShowLoginForm(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClick)
-    return () => document.removeEventListener("mousedown", handleClick)
-  }, [showLoginForm])
-
-  const modal = showLoginForm ? createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div ref={modalRef} className="bg-white rounded-lg shadow-lg p-6 relative w-full max-w-md mx-2 animate-fade-in">
-        <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 cursor-pointer"
-          onClick={() => setShowLoginForm(false)}
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
-      </div>
-    </div>,
-    document.body
-  ) : null
-
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="flex items-center gap-2 cursor-pointer">
-            {user ? <UserIcon className="h-4 w-4" /> : <Settings className="h-4 w-4" />}
-            {user && user.username}
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="flex items-center gap-1 cursor-pointer p-1 h-8 w-8 min-w-0 min-h-0 text-xs"
+          >
+            {user ? <UserIcon className="h-3.5 w-3.5" /> : <Settings className="h-3.5 w-3.5" />}
+            {/* Only show username if you want, or remove for pure icon */}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
+        <DropdownMenuContent align="start" side="left" className="min-w-[8rem] p-1 text-xs">
           {!user ? (
-            <DropdownMenuItem onClick={() => setShowLoginForm(true)} className="cursor-pointer">
-              <LogIn className="h-4 w-4 mr-2" /> ავტორიზაცია
+            <DropdownMenuItem onClick={() => setShowLoginForm(true)} className="cursor-pointer px-2 py-1 text-xs">
+              <LogIn className="h-3.5 w-3.5 mr-1" /> ავტორიზაცია
             </DropdownMenuItem>
           ) : (
             <>
-              <DropdownMenuItem disabled className="opacity-100 cursor-default">
-                <UserIcon className="h-4 w-4 mr-2" />
+              <DropdownMenuItem disabled className="opacity-100 cursor-default px-2 py-1 text-xs">
+                <UserIcon className="h-3.5 w-3.5 mr-1" />
                 {user.username}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} disabled={authLoading} className="text-red-600 cursor-pointer">
-                <LogOut className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={handleLogout} disabled={authLoading} className="text-red-600 cursor-pointer px-2 py-1 text-xs">
+                <LogOut className="h-3.5 w-3.5 mr-1" />
                 {authLoading ? "Loading..." : "გამოსვლა"}
               </DropdownMenuItem>
             </>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      {modal}
+
+      <Sheet open={showLoginForm} onOpenChange={setShowLoginForm}>
+        <SheetContent className="w-full sm:max-w-sm p-0 bg-white/90 backdrop-blur-xl shadow-2xl border-none max-h-screen overflow-y-auto h-auto">
+          <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl px-6 pt-6 pb-2 flex items-start justify-between border-b">
+            <div className="text-xl font-bold leading-tight">ავტორიზაცია</div>
+            <button
+              className="ml-4 mt-1 rounded-full p-2 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 shadow transition-colors cursor-pointer"
+              onClick={() => setShowLoginForm(false)}
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="px-6 py-6">
+            <Card className="w-full max-w-sm mx-auto">
+              <CardContent>
+                <LoginForm onLoginSuccess={handleLoginSuccess} />
+              </CardContent>
+            </Card>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   )
 } 

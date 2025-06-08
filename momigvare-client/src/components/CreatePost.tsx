@@ -30,7 +30,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-export function CreatePost() {
+interface CreatePostProps {
+  onSuccess?: () => void
+}
+
+export function CreatePost({ onSuccess }: CreatePostProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<FormValues>({
@@ -63,7 +67,7 @@ export function CreatePost() {
         body: JSON.stringify({
           ...data,
           budget: data.budget ? Number(data.budget) : undefined,
-          tags: data.tags.split(",").map((tag) => tag.trim()),
+          tags: [...new Set(data.tags.split(",").map((tag) => tag.trim()))],
         }),
       })
 
@@ -75,6 +79,7 @@ export function CreatePost() {
       form.reset()
       // Dispatch event to notify that a new post was created
       window.dispatchEvent(new Event('post-created'))
+      onSuccess?.()
     } catch (error) {
       toast.error("რაღაც ვერ გამოვიდა, გთხოვთ სცადოთ თავიდან.")
     } finally {

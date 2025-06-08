@@ -11,6 +11,7 @@ import { MapPin, Phone, X, Pencil } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { EditPost } from "./EditPost"
+import { Separator } from "@/components/ui/separator"
 
 interface User {
   _id: string
@@ -80,8 +81,22 @@ function PostSkeleton() {
   )
 }
 
-export function PostsList() {
+interface PostsListProps {
+  filters: {
+    type: string
+    status: string
+    title: string
+    tags: string
+    location: string
+    minPrice: string
+    maxPrice: string
+  }
+  onFilterChange: (filters: { type: string; status: string; title: string; tags: string; location: string; minPrice: string; maxPrice: string }) => void
+}
+
+export function PostsList({ filters, onFilterChange }: PostsListProps) {
   const [posts, setPosts] = useState<Post[]>([])
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [users, setUsers] = useState<Record<string, User>>({})
@@ -154,9 +169,37 @@ export function PostsList() {
     }
   }, [])
 
+  useEffect(() => {
+    const filtered = posts.filter(post => {
+      const titleTerms = filters.title.toLowerCase().split(/\s+/).filter(Boolean)
+      const tagsTerms = filters.tags.toLowerCase().split(/\s+/).filter(Boolean)
+      const locationTerms = filters.location.toLowerCase().split(/\s+/).filter(Boolean)
+      const matchesTitle = titleTerms.length === 0 || 
+        titleTerms.every(term => post.title.toLowerCase().includes(term))
+      const matchesTags = tagsTerms.length === 0 || 
+        tagsTerms.every(term => post.tags.some(tag => tag.toLowerCase().includes(term)))
+      const matchesLocation = locationTerms.length === 0 || 
+        locationTerms.every(term => post.location.toLowerCase().includes(term))
+      // Price filtering
+      const min = filters.minPrice ? parseFloat(filters.minPrice) : null
+      const max = filters.maxPrice ? parseFloat(filters.maxPrice) : null
+      const matchesMin = min === null || (post.budget !== undefined && post.budget >= min)
+      const matchesMax = max === null || (post.budget !== undefined && post.budget <= max)
+      // Type filtering
+      const matchesType = filters.type === 'all' || post.type === filters.type
+      // Status filtering
+      let matchesStatus = true
+      if (filters.status === 'active') matchesStatus = post.status === 'open'
+      else if (filters.status === 'solved') matchesStatus = post.status === 'solved'
+      //
+      return matchesTitle && matchesTags && matchesLocation && matchesMin && matchesMax && matchesType && matchesStatus
+    })
+    setFilteredPosts(filtered)
+  }, [posts, filters])
+
   if (loading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 items-start">
+      <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 items-start">
         {[...Array(6)].map((_, index) => (
           <PostSkeleton key={index} />
         ))}
@@ -191,8 +234,8 @@ export function PostsList() {
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-6 md:grid-cols-2 items-start">
-        {posts.map((post) => (
+      <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 items-start">
+        {filteredPosts.map((post) => (
           <Card 
             key={post._id} 
             className={`relative ${post.status !== "open" ? "opacity-60" : ""} cursor-pointer hover:shadow-md transition-shadow ${
@@ -244,24 +287,23 @@ export function PostsList() {
               <div className="mt-1 mb-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">{post.description}</p>
               </div>
-              <div className="border-t border-border/50 pt-3">
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5 break-all">
-                    <Phone className="h-3 w-3" />
-                    <span className="break-all">{post.contactInfo}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 break-all">
-                    <MapPin className="h-3 w-3" />
-                    <span className="break-all">{post.location}</span>
-                  </div>
+              <Separator className="my-3" />
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5 break-all">
+                  <Phone className="h-3 w-3" />
+                  <span className="break-all">{post.contactInfo}</span>
+                </div>
+                <div className="flex items-center gap-1.5 break-all">
+                  <MapPin className="h-3 w-3" />
+                  <span className="break-all">{post.location}</span>
                 </div>
               </div>
             </CardContent>
             <CardFooter>
               <div className="flex flex-wrap gap-2 w-full">
-                {post.tags.slice(0, 3).map((tag) => (
+                {post.tags.slice(0, 3).map((tag, index) => (
                   <span
-                    key={tag}
+                    key={`${post._id}-${tag}-${index}`}
                     className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary"
                   >
                     #{tag}
@@ -321,7 +363,7 @@ export function PostsList() {
                   </p>
                 </div>
 
-                <div className="border-t border-border/30" />
+                <Separator />
 
                 <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1.5">
@@ -334,13 +376,13 @@ export function PostsList() {
                   </div>
                 </div>
 
-                <div className="border-t border-border/30" />
+                <Separator />
 
                 <div>
                   <div className="flex flex-wrap gap-2">
-                    {selectedPost.tags.map((tag) => (
+                    {selectedPost.tags.map((tag, index) => (
                       <span
-                        key={tag}
+                        key={`${selectedPost._id}-${tag}-${index}`}
                         className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary border border-primary/20 shadow-sm"
                       >
                         #{tag}
@@ -354,17 +396,35 @@ export function PostsList() {
         </SheetContent>
       </Sheet>
 
-      {editingPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white shadow-lg p-6 relative w-full max-w-2xl mx-2 animate-fade-in rounded-lg">
-            <EditPost
-              post={editingPost}
-              onClose={() => setEditingPost(null)}
-              onSuccess={handleEditSuccess}
-            />
-          </div>
-        </div>
-      )}
+      <Sheet open={!!editingPost} onOpenChange={(open) => !open && setEditingPost(null)}>
+        <SheetContent className="w-full sm:max-w-lg p-0 bg-white/90 backdrop-blur-xl shadow-2xl border-none max-h-screen overflow-y-auto h-auto">
+          {editingPost && (
+            <>
+              <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl px-6 pt-6 pb-2 flex items-start justify-between border-b">
+                <div className="text-xl font-bold leading-tight">განცხადების რედაქტირება</div>
+                <button
+                  className="ml-4 mt-1 rounded-full p-2 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 shadow transition-colors cursor-pointer"
+                  onClick={() => setEditingPost(null)}
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="px-6 py-6">
+                <Card className="w-full max-w-2xl mx-auto">
+                  <CardContent>
+                    <EditPost
+                      post={editingPost}
+                      onClose={() => setEditingPost(null)}
+                      onSuccess={handleEditSuccess}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   )
 } 

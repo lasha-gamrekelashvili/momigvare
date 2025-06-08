@@ -80,7 +80,7 @@ export function EditPost({ post, onClose, onSuccess }: EditPostProps) {
         body: JSON.stringify({
           ...data,
           budget: data.budget ? Number(data.budget) : undefined,
-          tags: data.tags.split(",").map((tag) => tag.trim()),
+          tags: [...new Set(data.tags.split(",").map((tag) => tag.trim()))],
         }),
       })
 

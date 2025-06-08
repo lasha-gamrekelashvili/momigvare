@@ -66,7 +66,6 @@ export function LoginForm({
               id="username"
               name="username"
               type="text"
-              placeholder="johndoe"
               required
             />
           </div>
@@ -77,7 +76,6 @@ export function LoginForm({
                 id="email"
                 name="email"
                 type="email"
-                placeholder="m@example.com"
                 required
               />
             </div>
