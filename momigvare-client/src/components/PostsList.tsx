@@ -94,7 +94,7 @@ interface PostsListProps {
   onFilterChange: (filters: { type: string; status: string; title: string; tags: string; location: string; minPrice: string; maxPrice: string }) => void
 }
 
-export function PostsList({ filters, onFilterChange }: PostsListProps) {
+export function PostsList({ filters}: PostsListProps) {
   const [posts, setPosts] = useState<Post[]>([])
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
